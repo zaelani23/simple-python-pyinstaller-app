@@ -1,7 +1,7 @@
 node {
     stage('Build') {
         dir('sources') {
-            sh 'python -m py_compile add2vals.py calc.py'
+            sh 'cd . && python -m py_compile add2vals.py calc.py'
         }
     }
     stage('Test') {
