@@ -21,9 +21,9 @@ node {
     // }
     docker.image('python:3-slim-buster').inside {        
         stage('Deploy') {
-            // sh 'pip install --user pyinstaller'
-            // sh 'pyinstaller --onefile sources/add2vals.py'
-            sh 'python sources/add2vals.py 18 15'
+            sh 'pip install --user pyinstaller'
+            sh 'pyinstaller --onefile sources/add2vals.py'
+            sh './add2vals 18 15'
             sleep(time: 1, unit: 'MINUTES')
             archiveArtifacts 'dist/add2vals'
         }
