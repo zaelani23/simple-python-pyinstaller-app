@@ -11,16 +11,12 @@ node {
         }
     }
     stage('Manual Approval') {
-        steps {
-            script {
-                def userInput = input(
-                    id: 'manual-approval', message: 'Lanjutkan ke tahap Deploy?', 
-                    parameters: [choice(choices: ['Proceed', 'Abort'], description: 'Pilih salah satu', name: 'ACTION')]
-                )
-                if (userInput.ACTION == 'Abort') {
-                    error('Pipeline dihentikan oleh pengguna.')
-                }
-            }
+        def userInput = input(
+            id: 'manual-approval', message: 'Lanjutkan ke tahap Deploy?', 
+            parameters: [choice(choices: ['Proceed', 'Abort'], description: 'Pilih salah satu', name: 'ACTION')]
+        )
+        if (userInput.ACTION == 'Abort') {
+            error('Pipeline dihentikan oleh pengguna.')
         }
     }
     docker.image('cdrx/pyinstaller-linux:python2').inside {        
