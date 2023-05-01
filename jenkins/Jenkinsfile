@@ -23,7 +23,7 @@ node {
         stage('Deploy') {
             // sh 'pip install --user pyinstaller'
             // sh 'pyinstaller --onefile sources/add2vals.py'
-            sh 'pyhton sources/add2vals.py 18 15'
+            sh 'python sources/add2vals.py 18 15'
             sleep(time: 1, unit: 'MINUTES')
             archiveArtifacts 'dist/add2vals'
         }
