@@ -21,6 +21,8 @@ node {
     // }
     docker.image('python:2-alpine').inside {        
         stage('Deploy') {
+            sh 'mkdir -p /.cache/pip && chmod 777 /.cache/pip' // membuat direktori .cache/pip dan berikan izin untuk menulis ke dalamnya
+            sh 'pip install --upgrade pip' // upgrade pip ke versi terbaru
             sh 'pip install pyinstaller'
             sh 'pyinstaller --onefile sources/add2vals.py'
             sh './add2vals'
