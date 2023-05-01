@@ -21,7 +21,7 @@ node {
     }
     docker.image('python:3-slim-buster').inside {        
         stage('Deploy') {
-            sh './sources/add2vals.py 18 15'
+            sh 'python sources/add2vals.py 18 15'
             sleep(time: 1, unit: 'MINUTES')
         }
     }
