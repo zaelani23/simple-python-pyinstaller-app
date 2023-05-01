@@ -1,32 +1,45 @@
-node {
-    docker.image('python:2-alpine').inside {
+pipeline {
+    agent none
+    stages {
         stage('Build') {
-            sh 'python -m py_compile sources/add2vals.py sources/calc.py'
-        }        
-    }
-    docker.image('qnib/pytest').inside {
-        stage('Test') {
-            sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
-            step([$class: 'JUnitResultArchiver', testResults: 'test-reports/results.xml'])
+            agent {
+                docker {
+                    image 'python:2-alpine'
+                }
+            }
+            steps {
+                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+            }
         }
-    }
-    // stage('Manual Approval') {
-    //     def userInput = input(
-    //         id: 'manual-approval', message: 'Lanjutkan ke tahap Deploy?', 
-    //         parameters: [choice(choices: ['Proceed', 'Abort'], description: 'Pilih salah satu', name: 'ACTION', defaultValue: 'Abort')]
-    //     )
-    //     if (userInput == 'Abort') {
-    //         error('Pipeline dihentikan oleh pengguna.')
-    //     }
-    // }
-    docker.image('python:3-slim-buster').inside {        
-        stage('Deploy') {
-            sh 'pip install --upgrade pip'
-            sh 'pip install pyinstaller'
-            sh 'pyinstaller --onefile sources/add2vals.py'
-            sh './add2vals 18 15'
-            sleep(time: 1, unit: 'MINUTES')
-            archiveArtifacts 'dist/add2vals'
+        stage('Test') {
+            agent {
+                docker {
+                    image 'qnib/pytest'
+                }
+            }
+            steps {
+                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+            }
+            post {
+                always {
+                    junit 'test-reports/results.xml'
+                }
+            }
+        }
+        stage('Deliver') {
+            agent {
+                docker {
+                    image 'cdrx/pyinstaller-linux:python2'
+                }
+            }
+            steps {
+                sh 'pyinstaller --onefile sources/add2vals.py'
+            }
+            post {
+                success {
+                    archiveArtifacts 'dist/add2vals'
+                }
+            }
         }
     }
 }
