@@ -21,7 +21,7 @@ node {
     }
     docker.image('python:2-slim-buster').inside {        
         stage('Deploy') {
-            sh 'apt-get update && apt-get install -y build-essential'
+            sh 'sudp apt-get update && apt-get install -y build-essential'
             sh 'pip install pyinstaller'
             sh 'pyinstaller --onefile sources/add2vals.py'
             sh './add2vals'
